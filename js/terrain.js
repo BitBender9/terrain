@@ -17,7 +17,6 @@ async function setup()
     document.querySelector('#submit').addEventListener('click', regenerateTerrain)
     window.addEventListener('resize', fillScreen)
     fillScreen()
-    regenerateTerrain()
     tick(0)
 }
 
@@ -29,11 +28,13 @@ async function setup()
  * @param {string} fs_source - the source code of the fragment shader
  * @return {WebGLProgram} the compiled and linked program
  */
-function compile(vs_source, fs_source) {
+function compile(vs_source, fs_source)
+{
     const vs = gl.createShader(gl.VERTEX_SHADER)
     gl.shaderSource(vs, vs_source)
     gl.compileShader(vs)
-    if (!gl.getShaderParameter(vs, gl.COMPILE_STATUS)) {
+    if (!gl.getShaderParameter(vs, gl.COMPILE_STATUS))
+    {
         console.error(gl.getShaderInfoLog(vs))
         throw Error("Vertex shader compilation failed")
     }
@@ -41,7 +42,8 @@ function compile(vs_source, fs_source) {
     const fs = gl.createShader(gl.FRAGMENT_SHADER)
     gl.shaderSource(fs, fs_source)
     gl.compileShader(fs)
-    if (!gl.getShaderParameter(fs, gl.COMPILE_STATUS)) {
+    if (!gl.getShaderParameter(fs, gl.COMPILE_STATUS))
+    {
         console.error(gl.getShaderInfoLog(fs))
         throw Error("Fragment shader compilation failed")
     }
@@ -50,7 +52,8 @@ function compile(vs_source, fs_source) {
     gl.attachShader(program, vs)
     gl.attachShader(program, fs)
     gl.linkProgram(program)
-    if (!gl.getProgramParameter(program, gl.LINK_STATUS)) {
+    if (!gl.getProgramParameter(program, gl.LINK_STATUS))
+    {
         console.error(gl.getProgramInfoLog(program))
         throw Error("Linking failed")
     }
@@ -96,12 +99,13 @@ function setupGeomery(geom)
     gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, indexBuffer)
     gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, indices, gl.STATIC_DRAW)
 
-    return {
+    return (
+    {
         mode: gl.TRIANGLES,
         count: indices.length,
         type: gl.UNSIGNED_SHORT,
         vao: triangleArray
-    }
+    })
 }
 
 function fillScreen()
@@ -164,7 +168,7 @@ function generateTerrain(gridsize, faults)
             const a = Math.cos(theta)
             const b = Math.sin(theta)
             const d = (Math.random() * 2 - 1) * R
-            for(let i=0; i < positions.length; i+=1)
+            for(let i=0; i<positions.length; i+=1)
             {
                 const x = positions[i][0]
                 const z = positions[i][2]
@@ -210,10 +214,11 @@ function generateTerrain(gridsize, faults)
         }
     }
 
-    return {
+    return (
+    {
         triangles: triangles,
         attributes: [positions, normals]
-    }
+    })
 }
 
 /**

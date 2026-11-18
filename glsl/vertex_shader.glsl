@@ -5,7 +5,8 @@ uniform mat4 mv;
 uniform mat4 p;
 out vec3 vnormal;
 out vec3 vpos;
-void main() {
+void main()
+{
     gl_Position = p * mv * position;
     vnormal = normal;
     vpos = position.xyz;

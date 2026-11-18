@@ -7,7 +7,8 @@ uniform vec3 eyepos;
 out vec4 fragColor;
 in vec3 vnormal;
 in vec3 vpos;
-void main() {
+void main()
+{
     vec3 n = normalize(vnormal);
     vec3 L = normalize(lightdir);
     vec3 V = normalize(eyepos - vpos);
