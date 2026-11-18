@@ -126,13 +126,14 @@ function regenerateTerrain()
 {
     const gridsize = Number(document.querySelector('#gridsize').value) || 2
     const faults = Number(document.querySelector('#faults').value) || 0
-    window.geom = setupGeomery(generateTerrain(gridsize, faults))
+    const weathering = Number(document.querySelector('#weathering').value) || 0
+    window.geom = setupGeomery(generateTerrain(gridsize, faults, weathering))
 }
 
 /**
  * Build a gridsize-by-gridsize heightfield with faulting or a hemisphere.
  */
-function generateTerrain(gridsize, faults)
+function generateTerrain(gridsize, faults, weathering)
 {
     const n = gridsize
     const positions = new Array(n * n)
@@ -202,6 +203,8 @@ function generateTerrain(gridsize, faults)
         }
     }
 
+    applyWeathering(positions, n, weathering)
+
     const normals = computeGridNormals(positions, n)
     const triangles = []
     for(let row=0; row<n-1; row+=1)
@@ -219,6 +222,54 @@ function generateTerrain(gridsize, faults)
         triangles: triangles,
         attributes: [positions, normals]
     })
+}
+
+/**
+ * Spheroidal weathering: height-only Laplacian smooth, p' = (p + m) / 2,
+ * two-pass per iteration so updates don't bias the result.
+ */
+function applyWeathering(positions, n, iterations)
+{
+    const passes = Math.max(0, Math.floor(iterations))
+    for(let iter=0; iter<passes; iter+=1)
+    {
+        const nextHeights = new Array(n * n)
+        for(let row=0; row<n; row+=1)
+        {
+            for(let col=0; col<n; col+=1)
+            {
+                const i = row * n + col
+                let sum = 0
+                let count = 0
+                if (row > 0)
+                {
+                    sum += positions[i - n][1]
+                    count += 1
+                }
+                if (row < n - 1)
+                {
+                    sum += positions[i + n][1]
+                    count += 1
+                }
+                if (col > 0)
+                {
+                    sum += positions[i - 1][1]
+                    count += 1
+                }
+                if (col < n - 1)
+                {
+                    sum += positions[i + 1][1]
+                    count += 1
+                }
+                const m = sum / count
+                nextHeights[i] = 0.5 * (positions[i][1] + m)
+            }
+        }
+        for(let i=0; i<positions.length; i+=1)
+        {
+            positions[i][1] = nextHeights[i]
+        }
+    }
 }
 
 /**
