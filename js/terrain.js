@@ -1,4 +1,3 @@
-const EarthTone = new Float32Array([0.72, 0.52, 0.28, 1])
 const HEIGHT_SCALE = 1.0
 const LIGHT_DIR = normalize([0.4, 1.0, 0.3])
 
@@ -126,7 +125,10 @@ function regenerateTerrain()
 {
     const gridsize = Number(document.querySelector('#gridsize').value) || 2
     const faults = Number(document.querySelector('#faults').value) || 0
-    window.geom = setupGeomery(generateTerrain(gridsize, faults))
+    const terrain = generateTerrain(gridsize, faults)
+    window.heightMin = terrain.heightMin
+    window.heightMax = terrain.heightMax
+    window.geom = setupGeomery(terrain)
 }
 
 /**
@@ -202,6 +204,15 @@ function generateTerrain(gridsize, faults)
         }
     }
 
+    let heightMin = Infinity
+    let heightMax = -Infinity
+    for(let i=0; i<positions.length; i+=1)
+    {
+        const h = positions[i][1]
+        if (h < heightMin) heightMin = h
+        if (h > heightMax) heightMax = h
+    }
+
     const normals = computeGridNormals(positions, n)
     const triangles = []
     for(let row=0; row<n-1; row+=1)
@@ -217,7 +228,9 @@ function generateTerrain(gridsize, faults)
     return (
     {
         triangles: triangles,
-        attributes: [positions, normals]
+        attributes: [positions, normals],
+        heightMin: heightMin,
+        heightMax: heightMax
     })
 }
 
@@ -253,9 +266,10 @@ function draw(seconds)
 
     gl.bindVertexArray(geom.vao)
 
-    gl.uniform4fv(program.uniforms.color, EarthTone)
     gl.uniform3fv(program.uniforms.lightdir, LIGHT_DIR)
     gl.uniform3fv(program.uniforms.lightcolor, [1, 1, 1])
+    gl.uniform1f(program.uniforms.heightMin, heightMin)
+    gl.uniform1f(program.uniforms.heightMax, heightMax)
 
     const radius = 2.2
     const eyeY = HEIGHT_SCALE * 0.5 + 0.35
