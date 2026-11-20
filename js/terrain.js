@@ -163,18 +163,17 @@ function generateTerrain(gridsize, faults)
     }
     else
     {
-        const R = Math.SQRT2
         for(let f=0; f<faults; f+=1)
         {
+            const p0 = positions[Math.floor(Math.random() * positions.length)]
             const theta = Math.random() * Math.PI * 2
-            const a = Math.cos(theta)
-            const b = Math.sin(theta)
-            const d = (Math.random() * 2 - 1) * R
+            const nx = Math.cos(theta)
+            const nz = Math.sin(theta)
             for(let i=0; i<positions.length; i+=1)
             {
-                const x = positions[i][0]
-                const z = positions[i][2]
-                if (a * x + b * z > d)
+                const dx = positions[i][0] - p0[0]
+                const dz = positions[i][2] - p0[2]
+                if (dx * nx + dz * nz > 0)
                 {
                     positions[i][1] += 1
                 }
