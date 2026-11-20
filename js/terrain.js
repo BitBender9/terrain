@@ -130,9 +130,6 @@ function regenerateTerrain()
     window.geom = setupGeomery(generateTerrain(gridsize, faults, weathering))
 }
 
-/**
- * Build a gridsize-by-gridsize heightfield with faulting or a hemisphere.
- */
 function generateTerrain(gridsize, faults, weathering)
 {
     const n = gridsize
@@ -224,8 +221,7 @@ function generateTerrain(gridsize, faults, weathering)
 }
 
 /**
- * Spheroidal weathering: height-only Laplacian smooth, p' = (p + m) / 2,
- * two-pass per iteration so updates don't bias the result.
+ * Spheroidal weathering
  */
 function applyWeathering(positions, n, iterations)
 {
@@ -271,10 +267,6 @@ function applyWeathering(positions, n, iterations)
     }
 }
 
-/**
- * Grid-based normals: (n - s) x (w - e), using v for missing neighbors.
- * Row 0 is north (-Z) so the cross product points +Y on a flat grid.
- */
 function computeGridNormals(positions, n)
 {
     const normals = new Array(n * n)
