@@ -128,9 +128,6 @@ function regenerateTerrain()
     window.geom = setupGeomery(generateTerrain(gridsize, faults))
 }
 
-/**
- * Build a gridsize-by-gridsize heightfield with faulting or a hemisphere.
- */
 function generateTerrain(gridsize, faults)
 {
     const n = gridsize
@@ -219,10 +216,6 @@ function generateTerrain(gridsize, faults)
     })
 }
 
-/**
- * Grid-based normals: (n - s) x (w - e), using v for missing neighbors.
- * Row 0 is north (-Z) so the cross product points +Y on a flat grid.
- */
 function computeGridNormals(positions, n)
 {
     const normals = new Array(n * n)
